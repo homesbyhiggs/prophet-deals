@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Investment Property List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            background: #fff;
+            color: #111;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .page-tagline {
+            text-align: center;
+            font-style: italic;
+            color: #555;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .page-updated {
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .agent-block {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .agent-contact {
+            text-align: center;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .agent-contact a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .agent-note {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            margin: 8px 0 4px;
+        }
+
+        .financing-note {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            justify-content: center;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .showing-note {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        hr.divider {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+
+        .section-heading {
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #111;
+            padding-bottom: 4px;
+            margin-bottom: 14px;
+            margin-top: 28px;
+        }
+
+        /* Property row */
+        .property {
+            border-left: 4px solid #ccc;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: #fafafa;
+            border-radius: 2px;
+        }
+
+        .property.available {
+            border-left-color: #2e7d32;
+            background: #f7fdf7;
+        }
+
+        .property.available.showing {
+            border-left-color: #2e7d32;
+            background: #eef6ff;
+        }
+
+        .property.new {
+            border-left-color: #1565c0;
+            background: #f5f9ff;
+        }
+
+        .property.new.showing {
+            border-left-color: #1565c0;
+            background: #e8f0fe;
+        }
+
+        .property.sold {
+            border-left-color: #c62828;
+            background: #fff5f5;
+            opacity: 0.65;
+        }
+
+        .property.tbd {
+            border-left-color: #f9a825;
+            background: #fffdf0;
+        }
+
+        .property.tbd.showing {
+            border-left-color: #f9a825;
+            background: #fdf3e3;
+        }
+
+        .prop-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 3px;
+        }
+
+        .prop-address {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .prop-status {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+
+        .status-available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-sold {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-tbd {
+            background: #fffde7;
+            color: #f57f17;
+        }
+
+        .prop-subline {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 3px;
+        }
+
+        .prop-specs {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .prop-links {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .prop-links a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .prop-links a:hover {
+            text-decoration: underline;
+        }
+
+        .prop-photo {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            background: #eee;
+        }
+
+        .prop-asking {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-soon {
+            font-size: 11px;
+            font-weight: 600;
+            color: #7a6000;
+            background: #fff8dc;
+            padding: 1px 6px;
+            border-radius: 2px;
+        }
+
+        .prop-meta {
+            font-size: 12px;
+            color: #555;
+            margin: 2px 0 6px;
+        }
+
+        .prop-desc {
+            font-size: 12px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .page-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 16px;
+        }
+
+        @media print {
+            body {
+                padding: 16px;
+            }
+
+            .property {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-title">Available Investment Property List</div>
+    <div class="page-tagline">I buy houses and land in any condition.</div>
+    <div class="page-updated" id="updatedDate">UPDATED 4/21/26</div>
+
+    <div class="agent-block">Justin Highland</div>
+    <div class="agent-contact">📞 <a href="tel:8177272129">(817) 727-2129</a></div>
+    <div class="agent-contact">✉ <a href="mailto:justin.highland@prophethomes.com">justin.highland@prophethomes.com</a>
+    </div>
+    <div class="agent-note">Please bring me your highest and best offer on any of the FCFS properties below. Reach out
+        for access time for showings.</div>
+    <div class="financing-note"><strong>Need Financing?</strong> We work with several hard money lenders who can provide
+        term sheets within the hour.</div>
+
+    <div class="legend">
+        <span>🟦 Blue: New Release</span>
+        <span>🟥 Red: Sold</span>
+        <span>🟩 Green: Available</span>
+        <span>🟨 Yellow: Access Time TBD</span>
+    </div>
+    <div class="showing-note">Showings — Must RSVP for access</div>
+
+    <hr class="divider">
+
+    <div id="propertyList"></div>
+
+    <div class="page-footer">
+        Updated automatically as new properties come in · Prophet Homes · Fort Worth, TX
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────
+        // PROPERTY DATA
+        // This is auto-populated by the Gmail parser.
+        // Each object = one listing.
+        // ─────────────────────────────────────────
+
+        const showings = [
+            {
+                address: "3706 Aries Dr, Garland, TX 75044",
+                type: "Off Market", showing: "SHOWING 4/23", status: "available",
+                beds: 2, baths: 2, sqft: "1,098", lot: "0.090 Acres",
+                asking: 185000, down: 7500, build: 1982, closeDate: "04/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1X53zKA4jZkGKHfszhBr44aKaJ5zMxZIV?usp=share_link", taxRecords: "https://drive.google.com/file/d/1mZc2IBbf6kSeHKPDRgfOUDpGoGL1a-It/view?usp=share_link", comps: "https://drive.google.com/file/d/1hqGYBTRE16F4G7OiSRF198ndwyT1rEph/view?usp=share_link" },
+                desc: "Off-market opportunity in a highly desirable pocket of Garland (75044), right on the Richardson border. Strong demand and limited inventory. Solid for fix-and-flip or buy-and-hold. 8 days leaseback, $2k deposit. HOA $300/yr."
+            },
+            {
+                address: "5601 Comer Dr, Fort Worth, TX 76134",
+                type: "Off Market", showing: "SHOWING 4/21", status: "available",
+                beds: 3, baths: 2, sqft: "1,507", lot: "0.137 Acres",
+                asking: 145000, down: 5000, build: 1963, closeDate: "04/24/26",
+                links: { pictures: "https://drive.google.com/drive/folders/11gXMOuYezOO2H9cxR3H6I8mLOqmd_Kxf?usp=sharing", taxRecords: "https://drive.google.com/file/d/13GSH5V7AfOSETfTKRdsmpTOsckIRBozB/view?usp=drive_link", comps: "https://drive.google.com/file/d/1BBXaf_bqrI5pPILQTkpVD6TcA_I3F4C4/view?usp=drive_link" },
+                desc: "Cheap brick 3/2/2 in Highland Hills. Needs the works but priced accordingly. Low DOM for updated homes. Quick close 4/24 with 5-day leaseback through 4/29. $5,000 deposit held at title."
+            },
+            {
+                address: "803 Quartz Trl, Princeton, TX 75407",
+                type: "Off Market", showing: "SHOWING 4/21", status: "available",
+                beds: 4, baths: 2, sqft: "1,587", lot: "0.110 Acres",
+                asking: 220000, down: 7500, build: 2017, closeDate: "04/27/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1UVfyEUflnWh9EyW1yvhxS56tSL4aBuCL?usp=share_link", taxRecords: "https://drive.google.com/file/d/14PX17Db5vJIoCFzP_la5T4SqdlVKDqpj/view?usp=share_link", comps: "https://drive.google.com/file/d/1Gwb_qqkoCL4mNRZIvha-xaSmbtni3PwO/view?usp=share_link" },
+                desc: "Off-market 2017 build in rapidly growing Princeton. Minimal capex needed — strong cash-flow rental or easy flip. Princeton's growth drives strong rental demand and long-term appreciation."
+            },
+            {
+                address: "3516 Cripple Creek Dr, Dallas, TX 75224",
+                type: "Off Market", showing: null, status: "available",
+                beds: 4, baths: 2, sqft: "2,455", lot: "0.491 Acres",
+                asking: 265000, down: 7500, build: 1962, closeDate: "04/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1nlOk9jd4UYqcdDFQCW56kRxc5q7bfmxE?usp=sharing", taxRecords: "https://drive.google.com/file/d/15Mv_geDqZKmteoLUiuPZzHPwM8ZH2Txs/view?usp=drive_link", comps: "https://drive.google.com/file/d/1_ycwOATbehkwnZFDsvqcTxmnPaK73UBW/view?usp=drive_link" },
+                desc: "Brick 4/2/2 with solid curb appeal in Oak Park Estates. Great bones, good layout, half-acre lot backing to a creek. Full rehab to reach top of market. Closes vacant 4/29. Showing Thursday."
+            },
+            {
+                address: "8 Queensview Ct, Dallas, TX 75225",
+                type: "Off Market", showing: null, status: "available",
+                beds: 4, baths: "4.5", sqft: "4,488", lot: "0.155 Acres",
+                asking: 1099000, down: 15000, build: 1981, closeDate: "05/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1evROomt4pjVy7pwN1UELs8fNzMxZFD3ROD?usp=sharing", taxRecords: "https://drive.google.com/file/d/153vq1t1D3s_kK1xGT8GSZ2hyrG3D1ljS/view?usp=drive_link", comps: "https://drive.google.com/file/d/1xHgegdM-_LG9bLzBxFrBPz7TFikFPrY4/view?usp=drive_link" },
+                desc: "Rare find in Glen Lakes — feeds into Preston Hollow Elementary. Solid structure and systems. Pool is a value add vs. comps. Rehab level depends on exit target. Closes vacant 5/29. Showing Wednesday."
+            },
+            {
+                address: "2614 & 2705 Stanford St, Rowlett, TX 75088",
+                type: "Off Market", showing: null, status: "available",
+                beds: 8, baths: 6, sqft: "3,250", lot: "0.332 Acres",
+                asking: 680000, down: 10000, build: 1985, closeDate: null,
+                links: { pictures: "https://drive.google.com/drive/folders/1N4pZm3Hf-bwq5fnFBIsVLS_fgQfurX5?usp=sharing", taxRecords: "https://drive.google.com/file/d/17HGWeEgtGBH8dZkzMAoLInMk993EdDTZ/view?usp=drive_link", comps: "https://drive.google.com/file/d/17PIVWr97q3rMXi1V1la24NKcXo/view?usp=drive_link" },
+                desc: "Two brick 80s duplexes on the same street in Rowlett. 2614 Stanford: 2/2/1 each side. 2705 Stanford: 2/1.1/1 each side. Both rented M2M at below-market rates. ~$10–15K rehab per property, functional as-is. Only two sold comps in the past year: $382K and $400K. Avg market rents ~$1,900/mo per unit."
+            }
+        ];
+
+        const fcfs = [
+            {
+                address: "910 Rockwall St, McKinney, TX 75069",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 3, baths: 2, sqft: "1,964", lot: "0.323 Acres",
+                asking: 265000, down: 7500, build: 1971, closeDate: "04/30/26",
+                photo: "https://drive.google.com/thumbnail?id=1z3c5bgnn2ZcX717SizIsKK1dopXe2QP2&sz=w800",
+                links: { pictures: "https://drive.google.com/drive/folders/1i3QBytvVYvGOhjg70iOn3E8klBnJR33W?usp=sharing", taxRecords: "https://drive.google.com/file/d/1z1QOtDkSLQ9510Tv01vvDqbIwGQB-iQ5/view?usp=drive_link", comps: "https://drive.google.com/file/d/1_48qOeX_7mJY9AAvea0GjI/view?usp=drive_link" },
+                desc: "Ultra clean property in the heart of McKinney. Close proximity to old town with a large .3 acre lot. In great shape — cosmetics only. Roof is 7 years old. Closes 4/30."
+            },
+            {
+                address: "204 Briar Oak Dr, Murphy, TX 75094",
+                type: "Off Market", showing: null, status: "available",
+                beds: 3, baths: 2, sqft: "2,246", lot: "0.230 Acres",
+                asking: 375000, down: 7500, build: 1997, closeDate: "05/04/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1lCdg9sSim1Ahr7KI27tzR7hy_SfeOzGU?usp=sharing", taxRecords: "https://drive.google.com/file/d/1-SlJAvFyckDnHULp-Q9SiFnXTJGqmgG5/view?usp=drive_link", comps: "https://drive.google.com/file/d/1VnHn5_j5hv-vASqWkKh_3nhaDdcOesbr/view?usp=drive_link" },
+                desc: "Super clean brick 1997 build in Plano ISD with pool. Great curb appeal, big ticket items in good shape, pool in solid condition (just needs to be shocked). Cheapest comp in sub last year closed at $480K. Vacant FCFS."
+            },
+            {
+                address: "817 Loganwood Dr, Royse City, TX 75189",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 4, baths: 2, sqft: "1,440", lot: "0.152 Acres",
+                asking: 165000, down: 7500, build: 1984, closeDate: "06/02/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1lCdg9sSim1Ahr7KI27tzR7hy_SfeOzGU?usp=sharing", taxRecords: "https://drive.google.com/file/d/1-SlJAvFyckDnHULp-Q9SiFnXTJGqmgG5/view?usp=drive_link", comps: "https://drive.google.com/file/d/1VnHn5_j5hv-vASqWkKh_3nhaDdcOesbr/view?usp=drive_link" },
+                desc: "Clean brick 4/2 in Royse City — looks rent-ready as-is. $60K under list price. Easy flip or solid rental at a low basis. Closes 6/2/26 FCFS."
+            },
+            {
+                address: "3551 Bandera Rd, Fort Worth, TX 76116",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 4, baths: "1.5", sqft: "1,297", lot: "0.201 Acres",
+                asking: 190000, down: 7500, build: 1961, closeDate: "05/01/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1Ss66jhPTKssw9M8TDtzpQbPSrLzaSJkh?usp=sharing", taxRecords: "https://drive.google.com/file/d/1WH9mUTtl9ZpNJ4gC9IskxJyhrIyho_0K/view?usp=sharing", comps: "https://drive.google.com/file/d/13YeBXDakRXXPgd35GGbkO561oAoodhvO/view?usp=sharing" },
+                desc: "Great looking brick house in Western Hills. Convert the half bath to a full for one of the only 4/2s in the neighborhood. Unique backyard and lot size. Closes 5/1."
+            },
+            {
+                address: "226 Huron St, Cleburne, TX 76031",
+                type: "Off Market", showing: null, status: "available",
+                beds: 3, baths: 1, sqft: "1,108", lot: "0.205 Acres",
+                asking: 82500, down: 5000, build: 1930, closeDate: "04/30/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1wKci8i-GM3zTVxoPksl8GtAUkv?usp=sharing", taxRecords: "https://drive.google.com/file/d/1ecG-9A4uBzRskP9dXh6RMiDad5QDRv24/view?usp=drive_link", comps: "https://drive.google.com/file/d/1fil6G8ureKEhgbaGyzMjW3-j2Gwpv5aJ/view?usp=drive_link" },
+                desc: "Off market 3/1 in Cleburne. Needs HVAC, some pier and beam work, and cosmetics. Affordable entry price with good bones. Closes 4/30."
+            },
+            {
+                address: "406 S Bryan Belt Line Rd, Mesquite, TX 75149",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 5, baths: 3, sqft: "2,313", lot: "0.320 Acres",
+                asking: 190000, down: 7500, build: 1940, closeDate: "04/30/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1itJ0roUMyBS-_h5GdFkGkgSnU?usp=sharing", taxRecords: "https://drive.google.com/file/d/1EY1HkbE-5_QHUlCkQI2yczej2BlW1WxA/view?usp=drive_link", comps: null },
+                desc: "Mix-use zoned property in downtown Mesquite with multiple exit strategies. Full rehab needed. Buyer to verify uses. Closes 4/30."
+            },
+            {
+                address: "1001 W Grubb Dr, Mesquite, TX 75149",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 3, baths: "1.5", sqft: "1,369", lot: "0.165 Acres",
+                asking: 159000, down: 7500, build: 1963, closeDate: "04/28/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1xIV4rxYkmn70VzSpMGKlQWpfdPlRYL7h?usp=sharing", taxRecords: "https://drive.google.com/file/d/1u29CDDVYEfNMyCV4AoKJrdSfBlKqE4DY/view?usp=sharing", comps: "https://drive.google.com/file/d/13HIVL6jKfHXLvVsW1QSj5D8QXUfDjDLk/view?usp=sharing" },
+                desc: "Desirable corner lot in a target-rich investor pocket in Mesquite. Brick 3/2 at a low price point. VACANT — 1st come, 1st served."
+            },
+            {
+                address: "4394 Cochran Chapel Cir, Dallas, TX 75209",
+                type: "Off Market", showing: null, status: "available",
+                beds: 3, baths: 3, sqft: "1,806", lot: "0.214 Acres",
+                asking: 410000, down: 10000, build: 1979, closeDate: "04/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1fBh6OvgXWbOozqyX3hB6E_EuqJp27vT6?usp=sharing", taxRecords: "https://drive.google.com/file/d/1kcnTVNyiVmNE4wC21K_di0IYxkuKx0Rp/view?usp=drive_link", comps: "https://drive.google.com/file/d/1SnFZFLKyyfaWz2hqetz1At63tQeo_F4m/view?usp=drive_link" },
+                desc: "Off-market townhome by Love Field. Two comps on the same street sold at $631K and $649K. Good shape overall — one bath gutted and needs finishing. HOA $300/mo. Closes vacant 4/29."
+            },
+            {
+                address: "4803 Reiger Ave, Dallas, TX 75246",
+                type: "On Market – Discounted", showing: null, status: "available",
+                beds: 3, baths: 2, sqft: "1,642", lot: "0.145 Acres",
+                asking: 365000, down: 7500, build: 1914, closeDate: "04/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1qgc5uXHHoXItrmfkUhRLap0Oj6tTMY9h?usp=drive_link", taxRecords: "https://drive.google.com/file/d/1DPtSIic0kTUqwRewmmMKIyHXD5IYxN7/view?usp=drive_link", comps: "https://drive.google.com/file/d/1xKF8DCvDuradKH6rqiGIO0l5wv9LqRgY/view?usp=drive_link" },
+                desc: "Clean 3/2 with ADU in Old East Dallas. Minutes from Baylor Medical Center and Downtown. Minor updates to reach max value."
+            },
+            {
+                address: "6818 Hammond Ave, Dallas, TX 75223",
+                type: "Off Market", showing: null, status: "available",
+                beds: 2, baths: 2, sqft: "1,608", lot: "0.164 Acres",
+                asking: 570000, down: 10000, build: 1937, closeDate: "04/29/26",
+                links: { pictures: "https://drive.google.com/drive/folders/1xdKk-Kp5fZ3mzlPGWwu-omG-m?usp=sharing", taxRecords: "https://drive.google.com/file/d/1QeQCXWI8cft8aH45EdUJZLFF40kxTFnn/view?usp=drive_link", comps: "https://drive.google.com/file/d/1CuQK6HByLwmwiPfBZLiSjG4ZUtV5aJ/view?usp=drive_link" },
+                desc: "Brick Tudor across from Tenison Golf Club, south of White Rock Lake. Converted to duplex — value play is reverting to single-family. Full rehab, data backs the upside. Closes vacant 4/29 FCFS."
+            },
+            {
+                address: "Fairmount Package, Fort Worth, TX 76110",
+                type: "Off Market", showing: null, status: "available",
+                beds: 11, baths: 5, sqft: null, lot: null,
+                asking: 769000, down: 10000, build: null, closeDate: null,
+                links: { pictures: "https://drive.google.com/drive/folders/1sEhr-ULznEqOdGKmrlOf8it4pwuHGvgD?usp=sharing", taxRecords: "https://drive.google.com/drive/folders/1ZF5BpQTDZKPC9liLhHP3DqsRdRbmxaZR?usp=sharing", comps: "https://drive.google.com/file/d/1fFR1YLc72HbaVfxNxCWy2jaDl23x0lvu/view?usp=drive_link" },
+                desc: "3-property package in Fort Worth's Fairmount neighborhood. All 3 are extremely clean and well-maintained. Minimal work needed. Closing 4/21."
+            }
+        ];
+
+        // ── HELPERS ──
+        function formatDate(val) {
+            if (!val) return 'TBD';
+            const d = new Date(val);
+            if (isNaN(d)) return val;
+            return (d.getMonth() + 1) + '/' + d.getDate() + '/' + String(d.getFullYear()).slice(-2);
+        }
+
+        function isToday(val) {
+            if (!val) return false;
+            const d = new Date(val);
+            if (isNaN(d)) return false;
+            const now = new Date();
+            return d.getFullYear() === now.getFullYear() &&
+                d.getMonth() === now.getMonth() &&
+                d.getDate() === now.getDate();
+        }
+
+        function applyAutoStatus(deals) {
+            return deals.map(d => {
+                // Auto-promote to 'new' if added today and not manually marked sold/tbd
+                if (isToday(d.dateReceived) && d.status === 'available') {
+                    return { ...d, status: 'new' };
+                }
+                return d;
+            }).sort((a, b) => {
+                // Sort newest first, fall back to original order if no date
+                const da = a.dateReceived ? new Date(a.dateReceived) : new Date(0);
+                const db = b.dateReceived ? new Date(b.dateReceived) : new Date(0);
+                return db - da;
+            });
+        }
+        function daysUntil(dateStr) {
+            if (!dateStr) return null;
+            const d = new Date(dateStr);
+            if (isNaN(d)) return null;
+            const now = new Date(); now.setHours(0, 0, 0, 0);
+            return Math.ceil((d - now) / 86400000);
+        }
+        function closingTag(dateStr) {
+            const d = daysUntil(dateStr);
+            if (d === null) return '';
+            if (d < 0) return '<span class="close-soon">CLOSED</span>';
+            if (d === 0) return '<span class="close-soon">⚠ CLOSES TODAY</span>';
+            if (d <= 3) return `<span class="close-soon">⚠ CLOSES IN ${d} DAY${d === 1 ? '' : 'S'}</span>`;
+            if (d <= 7) return `<span class="close-soon">CLOSES IN ${d} DAYS</span>`;
+            return '';
+        }
+        function statusClass(s) {
+            s = (s || '').toLowerCase();
+            if (s.includes('sold')) return 'sold';
+            if (s.includes('new')) return 'new';
+            if (s.includes('tbd')) return 'tbd';
+            return 'available';
+        }
+        function statusLabel(s) {
+            s = (s || '').toLowerCase();
+            if (s.includes('sold')) return '🟥 Sold';
+            if (s.includes('new')) return '🟦 New Release';
+            if (s.includes('tbd')) return '🟨 Access TBD';
+            return '🟩 Available';
+        }
+        function statusBadgeClass(s) {
+            s = (s || '').toLowerCase();
+            if (s.includes('sold')) return 'status-sold';
+            if (s.includes('new')) return 'status-new';
+            if (s.includes('tbd')) return 'status-tbd';
+            return 'status-available';
+        }
+
+        // ── BUILD ONE PROPERTY BLOCK ──
+        function buildProperty(p) {
+            const specsArr = [];
+            if (p.beds) specsArr.push(`${p.beds} bed`);
+            if (p.baths) specsArr.push(`${p.baths} bath`);
+            if (p.sqft) specsArr.push(`${p.sqft} sqft`);
+            if (p.lot) specsArr.push(p.lot);
+
+            const linkParts = [];
+            if (p.links.pictures) linkParts.push(`<a href="${p.links.pictures}" target="_blank">Pictures</a>`);
+            if (p.links.taxRecords) linkParts.push(`<a href="${p.links.taxRecords}" target="_blank">Tax Records</a>`);
+            if (p.links.comps) linkParts.push(`<a href="${p.links.comps}" target="_blank">Comps</a>`);
+            if (p.links.packet) linkParts.push(`<a href="${p.links.packet}" target="_blank">Packet</a>`);
+
+            const subline = [p.type, p.showing ? (isToday(p.showing) || p.showing.toString().includes('T') ? 'SHOWING ' + formatDate(p.showing) : p.showing) : null].filter(Boolean).join(' — ');
+
+            const photoHtml = p.photo
+                ? `<img class="prop-photo" src="${p.photo}" alt="${p.address}" onerror="this.style.display='none'">`
+                : '';
+
+            return `
+  <div class="property ${statusClass(p.status)}${p.showing || p.section === 'showing' ? ' showing' : ''}">
+    ${photoHtml}
+    <div class="prop-header">
+      <div class="prop-address">${p.address}</div>
+      <span class="prop-status ${statusBadgeClass(p.status)}">${statusLabel(p.status)}</span>
+    </div>
+    ${subline ? `<div class="prop-subline">${subline}</div>` : ''}
+    <div class="prop-specs">${specsArr.join(' / ')}</div>
+    <div class="prop-links">${linkParts.join(' | ')}</div>
+    <div class="prop-asking">$${p.asking.toLocaleString()}</div>
+    <div class="prop-meta">Down: $${p.down?.toLocaleString() ?? '—'} &nbsp;·&nbsp; Build: ${p.build ?? '—'} &nbsp;·&nbsp; Est. Close: ${formatDate(p.closeDate)}</div>
+    <div class="prop-desc">${p.desc}</div>
+  </div>`;
+        }
+
+        // ── RENDER ──
+        function render(showingsArr, fcfsArr) {
+            const today = new Date();
+            const mo = String(today.getMonth() + 1).padStart(2, '0');
+            const dy = String(today.getDate()).padStart(2, '0');
+            const yr = String(today.getFullYear()).slice(-2);
+            document.getElementById('updatedDate').textContent = `UPDATED ${mo}/${dy}/${yr}`;
+
+            let html = '';
+            if (showingsArr.length) {
+                html += `<div class="section-heading">Showings — Must RSVP for Access</div>`;
+                showingsArr.forEach(p => { html += buildProperty(p); });
+            }
+            if (fcfsArr.length) {
+                html += `<div class="section-heading">First Come First Serve (FCFS) — Contact for Access</div>`;
+                fcfsArr.forEach(p => { html += buildProperty(p); });
+            }
+            if (!html) html = '<p style="color:#999;text-align:center;padding:40px 0">No active deals right now.</p>';
+
+            document.getElementById('propertyList').innerHTML = html;
+        }
+
+        // ── LOAD FROM SHEET (or fall back to hardcoded data) ──
+        const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyrZs1IDdJx8dAav6t6ICDovOI6nJBz04vL7nkpMMTWr-FGbCV2XzDwB_i-kJmCHwKHqA/exec';
+
+        function loadDeals() {
+            if (SHEET_URL && SHEET_URL !== 'YOUR_WEB_APP_URL_HERE') {
+                document.getElementById('propertyList').innerHTML = '<p style="color:#999;text-align:center;padding:40px 0">Loading...</p>';
+                fetch(SHEET_URL)
+                    .then(r => {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        return r.json();
+                    })
+                    .then(deals => {
+                        if (!deals.length) { renderFallback(); return; }
+                        const processed = applyAutoStatus(deals);
+                        const s = processed.filter(d => d.section === 'showing' && d.status !== 'sold');
+                        const f = processed.filter(d => d.section !== 'showing' && d.status !== 'sold');
+                        render(s, f);
+                    })
+                    .catch(err => {
+                        console.error('Sheet fetch failed:', err);
+                        renderFallback();
+                    });
+            } else {
+                renderFallback();
+            }
+        }
+
+        function renderFallback() {
+            const all = applyAutoStatus([...showings, ...fcfs]);
+            const s = all.filter(d => d.section === 'showing' && d.status !== 'sold');
+            const f = all.filter(d => d.section !== 'showing' && d.status !== 'sold');
+            render(s, f);
+        }
+
+        loadDeals();
+    </script>
+</body>
+
+</html>
