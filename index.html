@@ -289,6 +289,75 @@
                 break-inside: avoid;
             }
         }
+
+        /* Skeleton loader */
+        .skeleton {
+            background: #f0f0f0;
+            border-radius: 2px;
+            margin-bottom: 12px;
+            padding: 14px;
+            border-left: 4px solid #e0e0e0;
+        }
+
+        .skel-line {
+            height: 12px;
+            border-radius: 2px;
+            background: #e0e0e0;
+            margin-bottom: 8px;
+            animation: shimmer 1.4s ease infinite;
+        }
+
+        .skel-line.wide {
+            width: 70%;
+        }
+
+        .skel-line.med {
+            width: 45%;
+        }
+
+        .skel-line.short {
+            width: 25%;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* Single property view */
+        .single-back {
+            display: inline-block;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #1a73e8;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .single-back:hover {
+            text-decoration: underline;
+        }
+
+        /* Permalink button */
+        .prop-permalink {
+            font-size: 11px;
+            color: #aaa;
+            text-decoration: none;
+            margin-left: auto;
+            padding-left: 10px;
+            white-space: nowrap;
+        }
+
+        .prop-permalink:hover {
+            color: #1a73e8;
+        }
     </style>
 </head>
 
@@ -499,9 +568,9 @@
                 }
                 return d;
             }).sort((a, b) => {
-                // Sort newest first, fall back to original order if no date
-                const da = a.dateReceived ? new Date(a.dateReceived) : new Date(0);
-                const db = b.dateReceived ? new Date(b.dateReceived) : new Date(0);
+                // Sort by most recently updated first, fall back to date received
+                const da = new Date(a.updatedAt || a.dateReceived || 0);
+                const db = new Date(b.updatedAt || b.dateReceived || 0);
                 return db - da;
             });
         }
@@ -544,7 +613,11 @@
         }
 
         // ── BUILD ONE PROPERTY BLOCK ──
-        function buildProperty(p) {
+        function slugify(address) {
+            return address.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        }
+
+        function buildProperty(p, single = false) {
             const specsArr = [];
             if (p.beds) specsArr.push(`${p.beds} bed`);
             if (p.baths) specsArr.push(`${p.baths} bath`);
@@ -563,29 +636,66 @@
                 ? `<img class="prop-photo" src="${p.photo}" alt="${p.address}" onerror="this.style.display='none'">`
                 : '';
 
+            const slug = slugify(p.address);
+            const permalinkHtml = single ? '' : `<a class="prop-permalink" href="#${slug}" onclick="showSingle('${slug}');return false;">🔗 Share</a>`;
+
             return `
-  <div class="property ${statusClass(p.status)}${p.showing || p.section === 'showing' ? ' showing' : ''}">
+  <div class="property ${statusClass(p.status)}${p.showing || p.section === 'showing' ? ' showing' : ''}" id="prop-${slug}">
     ${photoHtml}
     <div class="prop-header">
       <div class="prop-address">${p.address}</div>
       <span class="prop-status ${statusBadgeClass(p.status)}">${statusLabel(p.status)}</span>
+      ${permalinkHtml}
     </div>
     ${subline ? `<div class="prop-subline">${subline}</div>` : ''}
     <div class="prop-specs">${specsArr.join(' / ')}</div>
     <div class="prop-links">${linkParts.join(' | ')}</div>
-    <div class="prop-asking">$${p.asking.toLocaleString()}</div>
-    <div class="prop-meta">Down: $${p.down?.toLocaleString() ?? '—'} &nbsp;·&nbsp; Build: ${p.build ?? '—'} &nbsp;·&nbsp; Est. Close: ${formatDate(p.closeDate)}</div>
+    <div class="prop-asking">$${Number(p.asking).toLocaleString()}</div>
+    <div class="prop-meta">Down: $${p.down ? Number(p.down).toLocaleString() : '—'} &nbsp;·&nbsp; Build: ${p.build ?? '—'} &nbsp;·&nbsp; Est. Close: ${formatDate(p.closeDate)}</div>
     <div class="prop-desc">${p.desc}</div>
   </div>`;
         }
 
+        // ── SKELETON ──
+        function showSkeleton() {
+            const skel = Array(4).fill(`
+    <div class="skeleton">
+      <div class="skel-line wide"></div>
+      <div class="skel-line short"></div>
+      <div class="skel-line med"></div>
+      <div class="skel-line short"></div>
+    </div>`).join('');
+            document.getElementById('propertyList').innerHTML = skel;
+        }
+
+        // ── SINGLE PROPERTY VIEW ──
+        let allDeals = [];
+
+        function showSingle(slug) {
+            const p = allDeals.find(d => slugify(d.address) === slug);
+            if (!p) return;
+            window.location.hash = slug;
+            document.getElementById('propertyList').innerHTML =
+                `<a class="single-back" onclick="showAll();return false;" href="#">← Back to all listings</a>` +
+                buildProperty(p, true);
+        }
+
+        function showAll() {
+            window.location.hash = '';
+            renderDeals(allDeals);
+        }
+
         // ── RENDER ──
-        function render(showingsArr, fcfsArr) {
+        function renderDeals(deals) {
+            allDeals = deals;
             const today = new Date();
             const mo = String(today.getMonth() + 1).padStart(2, '0');
             const dy = String(today.getDate()).padStart(2, '0');
             const yr = String(today.getFullYear()).slice(-2);
             document.getElementById('updatedDate').textContent = `UPDATED ${mo}/${dy}/${yr}`;
+
+            const showingsArr = deals.filter(d => (d.section === 'showing' || d.showing) && d.status !== 'sold');
+            const fcfsArr = deals.filter(d => !d.section || (d.section !== 'showing' && !d.showing)).filter(d => d.status !== 'sold');
 
             let html = '';
             if (showingsArr.length) {
@@ -597,42 +707,35 @@
                 fcfsArr.forEach(p => { html += buildProperty(p); });
             }
             if (!html) html = '<p style="color:#999;text-align:center;padding:40px 0">No active deals right now.</p>';
-
             document.getElementById('propertyList').innerHTML = html;
-        }
 
-        // ── LOAD FROM SHEET (or fall back to hardcoded data) ──
-        const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyrZs1IDdJx8dAav6t6ICDovOI6nJBz04vL7nkpMMTWr-FGbCV2XzDwB_i-kJmCHwKHqA/exec';
-
-        function loadDeals() {
-            if (SHEET_URL && SHEET_URL !== 'YOUR_WEB_APP_URL_HERE') {
-                document.getElementById('propertyList').innerHTML = '<p style="color:#999;text-align:center;padding:40px 0">Loading...</p>';
-                fetch(SHEET_URL)
-                    .then(r => {
-                        if (!r.ok) throw new Error('HTTP ' + r.status);
-                        return r.json();
-                    })
-                    .then(deals => {
-                        if (!deals.length) { renderFallback(); return; }
-                        const processed = applyAutoStatus(deals);
-                        const s = processed.filter(d => d.section === 'showing' && d.status !== 'sold');
-                        const f = processed.filter(d => d.section !== 'showing' && d.status !== 'sold');
-                        render(s, f);
-                    })
-                    .catch(err => {
-                        console.error('Sheet fetch failed:', err);
-                        renderFallback();
-                    });
-            } else {
-                renderFallback();
+            // Handle direct permalink on load
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const p = allDeals.find(d => slugify(d.address) === hash);
+                if (p) showSingle(hash);
             }
         }
 
-        function renderFallback() {
-            const all = applyAutoStatus([...showings, ...fcfs]);
-            const s = all.filter(d => d.section === 'showing' && d.status !== 'sold');
-            const f = all.filter(d => d.section !== 'showing' && d.status !== 'sold');
-            render(s, f);
+        // ── LOAD FROM SHEET ──
+        const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyrZs1IDdJx8dAav6t6ICDovOI6nJBz04vL7nkpMMTWr-FGbCV2XzDwB_i-kJmCHwKHqA/exec';
+
+        function loadDeals() {
+            showSkeleton();
+            if (SHEET_URL && SHEET_URL !== 'YOUR_WEB_APP_URL_HERE') {
+                fetch(SHEET_URL)
+                    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                    .then(deals => {
+                        if (!deals.length) { renderDeals(applyAutoStatus([...showings, ...fcfs])); return; }
+                        renderDeals(applyAutoStatus(deals));
+                    })
+                    .catch(err => {
+                        console.error('Sheet fetch failed:', err);
+                        renderDeals(applyAutoStatus([...showings, ...fcfs]));
+                    });
+            } else {
+                renderDeals(applyAutoStatus([...showings, ...fcfs]));
+            }
         }
 
         loadDeals();
