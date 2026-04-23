@@ -568,7 +568,11 @@
                 }
                 return d;
             }).sort((a, b) => {
-                // Sort by most recently updated first, fall back to date received
+                // Sold always goes to bottom
+                const aSold = a.status === 'sold' ? 1 : 0;
+                const bSold = b.status === 'sold' ? 1 : 0;
+                if (aSold !== bSold) return aSold - bSold;
+                // Otherwise sort by most recently updated
                 const da = new Date(a.updatedAt || a.dateReceived || 0);
                 const db = new Date(b.updatedAt || b.dateReceived || 0);
                 return db - da;
@@ -694,8 +698,8 @@
             const yr = String(today.getFullYear()).slice(-2);
             document.getElementById('updatedDate').textContent = `UPDATED ${mo}/${dy}/${yr}`;
 
-            const showingsArr = deals.filter(d => (d.section === 'showing' || d.showing) && d.status !== 'sold');
-            const fcfsArr = deals.filter(d => !d.section || (d.section !== 'showing' && !d.showing)).filter(d => d.status !== 'sold');
+            const showingsArr = deals.filter(d => d.section === 'showing' || d.showing);
+            const fcfsArr = deals.filter(d => !d.section || (d.section !== 'showing' && !d.showing));
 
             let html = '';
             if (showingsArr.length) {
