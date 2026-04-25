@@ -484,7 +484,6 @@
             if (p.links.pictures) linkParts.push(`<a href="${p.links.pictures}" target="_blank">Pictures</a>`);
             if (p.links.taxRecords) linkParts.push(`<a href="${p.links.taxRecords}" target="_blank">Tax Records</a>`);
             if (p.links.comps) linkParts.push(`<a href="${p.links.comps}" target="_blank">Comps</a>`);
-            if (p.links.packet) linkParts.push(`<a href="${p.links.packet}" target="_blank">Packet</a>`);
 
             const subline = [p.type, p.showing ? (isToday(p.showing) || p.showing.toString().includes('T') ? 'SHOWING ' + formatDate(p.showing) : p.showing) : null].filter(Boolean).join(' — ');
 
